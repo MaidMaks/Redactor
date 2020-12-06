@@ -10,7 +10,6 @@ namespace Redactor
         public float w { get; protected set; }
         public float h { get; protected set; }
 
-
         public Figure(float x, float y, float w, float h)
         {
             this.x = x - w / 2;

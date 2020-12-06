@@ -7,16 +7,9 @@ namespace Redactor
     class Manipulator : Figure
     {
         public Figure fig { get; private set; }
-        enum Corners
-        {
-            Bl,
-            Br,
-            Tl,
-            Tr,
-            Figure,
-            None
-        }
-        Corners corn = Corners.None;
+
+        private delegate void Corner(float dx, float dy);
+        Corner corner;
 
         public Manipulator(float x, float y, float w, float h) : base(x, y, w, h)
         {
@@ -54,60 +47,66 @@ namespace Redactor
 
             if (fig.Touch(xx, yy))
             {
-                corn = Corners.Figure;
+                corner = figure;
                 return true;
             }
             else if (Math.Abs(xx - x) <= 4 && Math.Abs(xx - x) >= 0 && Math.Abs(yy - y) <= 4 && Math.Abs(yy - y) >= 0)
             {
-                corn = Corners.Tl;
+                corner = tLeft;
                 return true;
             }
             else if (Math.Abs(xx - x) <= 4 && Math.Abs(xx - x) >= 0 && Math.Abs(yy - y - h) <= 4 && Math.Abs(yy - y - h) >= 0)
             {
-                corn = Corners.Bl;
+                corner = bLeft;
                 return true;
             }
             else if (Math.Abs(xx - x - w) <= 4 && Math.Abs(xx - x- w) >= 0 && Math.Abs(yy - y) <= 4 && Math.Abs(yy - y ) >= 0)
             {
-                corn = Corners.Tr;
+                corner = tRight;
                 return true;
             }
             else if (Math.Abs(xx - x - w) <= 4 && Math.Abs(xx - x - w) >= 0 && Math.Abs(yy - y - h) <= 4 && Math.Abs(yy - y - h) >= 0)
             {
-                corn = Corners.Br;
+                corner = bRight;
                 return true;
             }
             return false;
         }
 
+        private void bLeft(float dx, float dy)
+        {
+            fig.Move(dx, 0);
+            fig.Resize(-dx, dy);
+        }
+        
+        private void tLeft(float dx, float dy)
+        {
+            fig.Move(dx, dy);
+            fig.Resize(-dx, -dy);
+        }
+        
+        private void bRight(float dx, float dy)
+        { 
+            fig.Resize(dx, dy);
+        }
+        
+        private void tRight(float dx, float dy)
+        {
+            fig.Move(0, dy);
+            fig.Resize(dx, -dy);
+        }
+
+        private void figure(float dx, float dy)
+        { 
+            fig.Move(dx, dy); 
+        }
+
         public void Drag(float dx, float dy)
         {
-            switch (corn)
-            {
-                case Corners.Tl:
-                    fig.Move(dx, dy);
-                    fig.Resize(-dx, -dy);
-                    break;
-                case Corners.Tr:
-                    fig.Move(0, dy);
-                    fig.Resize(dx, -dy);
-                    break;
-                case Corners.Bl:
-                    fig.Move(dx, 0);
-                    fig.Resize(-dx, dy);
-                    break;
-                case Corners.Br:
-                    
-                    fig.Resize(dx, dy);
-                    break;
-                case Corners.Figure:
-                    fig.Move(dx, dy);
-                    break;
-                default:
-                    break;
-            }
+            corner(dx, dy);
             Update();
         }
+
         public override Figure Clone()
         {
             return fig;

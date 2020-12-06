@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Command.cs" />
     <Compile Include="Figure.cs" />
+    <Compile Include="FigureSelect.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="GroupCreator.cs" />
     <Compile Include="ICreators.cs" />
